@@ -5,6 +5,20 @@ class ContactForm extends Component {
     name: '',
     number: '',
   };
+  componentDidMount() {
+    const infoData = localStorage.getItem('info');
+    if (infoData) {
+      this.setState({ ...JSON.parse(infoData) });
+    }
+  }
+  componentDidUpdate(_, prevState) {
+    if (
+      prevState.name.length !== this.state.name.length ||
+      prevState.number.length !== this.state.number.length
+    ) {
+      localStorage.setItem('info', JSON.stringify(this.state));
+    }
+  }
   handleChange = e => {
     const { name, value } = e.target;
     this.setState({ [name]: value });
@@ -12,7 +26,7 @@ class ContactForm extends Component {
 
   handleSubmit = evt => {
     evt.preventDefault();
-    this.props.createUser({ ...this.state, id: nanoid() });
+    this.props.createUser({ id: nanoid(), ...this.state });
     this.setState({ name: '', number: '' });
   };
   render() {

@@ -13,6 +13,18 @@ class App extends Component {
     ],
     filter: '',
   };
+  componentDidMount() {
+    const localData = localStorage.getItem('users');
+    if (localData && JSON.parse(localData).length) {
+      this.setState({ contacts: JSON.parse(localData) });
+    }
+  }
+  componentDidUpdate(_, prevState) {
+    if (prevState.contacts.length !== this.state.contacts.length) {
+      localStorage.setItem('users', JSON.stringify(this.state.contacts));
+    }
+  }
+
   createUser = data => {
     const find = this.state.contacts.find(({ name }) => name === data.name);
     if (find) {
@@ -31,9 +43,9 @@ class App extends Component {
   };
 
   handleDelete = id => {
-    const del = this.state.contacts.filter(contact => contact.id !== id);
-    console.log(del);
-    this.setState({ contacts: del });
+    this.setState(prev => ({
+      contacts: prev.contacts.filter(contact => contact.id !== id),
+    }));
   };
 
   render() {
